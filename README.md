@@ -64,3 +64,12 @@ jobs:
 
 ## What's Next?
 Now that your workflow is working, you should see daily commits in your repository, which will keep your GitHub contributions calendar green. 
+
+## How often this daily commits do a commit?
+- The daily commits are scheduled to run once a day at midnight UTC. This is specified in the workflow file using the cron schedule:
+
+```yml
+on:
+  schedule:
+    - cron: '0 0 * * *'  # runs at midnight every day
+```
