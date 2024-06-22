@@ -14,6 +14,8 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Set up Node.js
       uses: actions/setup-node@v2
@@ -32,4 +34,4 @@ jobs:
         echo "Daily update $(date)" >> daily_commit.txt
         git add daily_commit.txt
         git commit -m "Daily commit $(date)"
-        git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/archejk/daily-chirp.git HEAD:main
+        git push origin HEAD:main
