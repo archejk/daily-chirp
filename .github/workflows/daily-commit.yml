@@ -25,11 +25,11 @@ jobs:
 
     - name: Make a commit
       env:
-        ACTIONS_PAT: ${{ secrets.ACTIONS_PAT }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         git config --global user.name 'archejk'
         git config --global user.email 'jkarche13@gmail.com'
         echo "Daily update $(date)" >> daily_commit.txt
         git add daily_commit.txt
         git commit -m "Daily commit $(date)"
-        git push https://${{ secrets.ACTIONS_PAT }}@github.com/archejk/daily-chirp.git HEAD:main
+        git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/archejk/daily-chirp.git HEAD:main
