@@ -73,3 +73,6 @@ on:
   schedule:
     - cron: '0 0 * * *'  # runs at midnight every day
 ```
+
+## Status
+[![Daily Commit](https://github.com/archejk/daily-chirp/actions/workflows/daily-commit.yml/badge.svg)](https://github.com/archejk/daily-chirp/actions/workflows/daily-commit.yml)
