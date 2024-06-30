@@ -31,7 +31,8 @@ jobs:
       run: |
         git config --global user.name 'archejk'
         git config --global user.email 'jkarche13@gmail.com'
-        echo "Daily update $(date)" >> daily_commit.txt
+        current_time=$(TZ=UTC-8 date '+%a %b %d %T UTC %Y')
+        echo "Daily update $current_time" >> daily_commit.txt
         git add daily_commit.txt
-        git commit -m "Daily commit $(date)"
+        git commit -m "Daily commit $current_time"
         git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/archejk/daily-chirp.git HEAD:main
