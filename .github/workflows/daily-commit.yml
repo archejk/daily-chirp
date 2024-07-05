@@ -29,10 +29,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        # Randomly decide the number of commits for this run
         RANDOM_NUMBER=$(shuf -i 1-100 -n 1)
-        
-        # Define the probability threshold for making a commit
+
         THRESHOLD=15  # Approximately a 15% chance each hour
 
         if [ $RANDOM_NUMBER -le $THRESHOLD ]; then
