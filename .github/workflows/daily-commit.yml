@@ -39,7 +39,7 @@ jobs:
           current_time=$(TZ=UTC-8 date '+%a %b %d %T UTC %Y')
           echo "Daily update $current_time" >> daily_commit.txt
           git add daily_commit.txt
-          git commit -m "Daily commit $(TZ=UTC-8 date '+%Y-%m-%d %H:%M:%S')"
+          git commit -m "Daily commit $current_time"
           git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/archejk/daily-chirp.git HEAD:main
         else
           echo "Skipping commit for this run"
