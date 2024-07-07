@@ -31,7 +31,7 @@ jobs:
       run: |
         RANDOM_NUMBER=$(shuf -i 1-100 -n 1)
 
-        THRESHOLD=15  # Approximately a 25% chance each hour
+        THRESHOLD=25  # Approximately a 25% chance each hour, leading to approximately 6 commits per day on average.
 
         if [ $RANDOM_NUMBER -le $THRESHOLD ]; then
           git config --global user.name 'archejk'
