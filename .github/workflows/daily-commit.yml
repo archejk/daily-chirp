@@ -28,12 +28,20 @@ jobs:
     - name: Make a commit
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        COMMIT_ENABLED: ${{ secrets.COMMIT_ENABLED }} # load the secret value created in github
       run: |
+        # Check if commit is enabled
+        if [ "${COMMIT_ENABLED}" != "true" ]; then
+          echo "Commits are disabled via COMMIT_ENABLED secret. Exiting..."
+          exit 0
+        fi
+
         RANDOM_NUMBER=$(shuf -i 1-100 -n 1)
 
         THRESHOLD=25  # Approximately a 25% chance each hour, leading to approximately 6 commits per day on average.
 
         if [ $RANDOM_NUMBER -le $THRESHOLD ]; then
+          echo "Commit threshold met. Proceeding with commit..."
           git config --global user.name 'archejk'
           git config --global user.email 'jkarche13@gmail.com'
           current_time=$(TZ=UTC-8 date '+%a %b %d %T UTC %Y')
