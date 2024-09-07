@@ -29,6 +29,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         COMMIT_ENABLED: ${{ secrets.COMMIT_ENABLED }} # load the secret value created in github
+        DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }} # load the secret value created in github
       run: |
         # Check if commit is enabled
         if [ "${COMMIT_ENABLED}" != "true" ]; then
@@ -44,11 +45,20 @@ jobs:
           echo "Commit threshold met. Proceeding with commit..."
           git config --global user.name 'archejk'
           git config --global user.email 'jkarche13@gmail.com'
+          
+          # Create a unique commit message with a timestamp
           current_time=$(TZ=UTC-8 date '+%a %b %d %T UTC %Y')
           echo "Daily update $current_time" >> daily_commit.txt
+          
           git add daily_commit.txt
           git commit -m "Daily commit $current_time"
           git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/archejk/daily-chirp.git HEAD:main
+
+          # Send alert to Discord
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d '{"username": "GitHub Bot", "content": "✅ Successful commit: Daily commit '"$current_time"'."}' \
+               $DISCORD_WEBHOOK_URL
         else
-          echo "Skipping commit for this run"
+          echo "Skipping commit for this run as threshold not met."
         fi
