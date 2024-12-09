@@ -12,7 +12,7 @@ Reflects the continuous streak of contributions.
 
 ## Added notification system
 - Implement a Discord notification to alert you whenever a successful commit is made by integrating a Discord webhook into your GitHub Actions workflow.
-   - Ticket: https://github.com/archejk/daily-chirp/issues/10
+   - Ticket: [[daily-chirp] implement a discord alert](https://github.com/archejk/daily-chirp/issues/10)
 
 ## GitHub Actions Workflow
 - Used the `GITHUB_TOKEN` provided by GitHub Actions to authenticate and push commits.
