@@ -1,5 +1,5 @@
 # DailyChirp/GreenStreak
-A Vue.js project designed to practice about CI/CD principles and GitHub Actions.
+A Vue.js project designed to practice about CI/CD principles, GitHub Actions and Webhook
 
 ## Description
 - A GitHub Actions workflow that reflects the continuous streak of contributions to Vue.js project.
