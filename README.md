@@ -10,9 +10,11 @@ Reflects the continuous streak of contributions.
 ## Repository Settings
 - Ensured that Read and Write permissions were selected for workflow permissions in the repository settings.
 
-## Added notification system
+### Added features
 - Implement a Discord notification to alert you whenever a successful commit is made by integrating a Discord webhook into your GitHub Actions workflow.
    - Ticket: [[daily-chirp] implement a discord alert](https://github.com/archejk/daily-chirp/issues/10)
+- Added a mechanism to control whether the workflow should run based on a configurable schedule, and whether it should be turned on or off. This can be achieved by using environment variables or repository secrets to control the workflow's behavior.
+   - Ticket: [[daily-chirp] add a schedule control mechanism](https://github.com/archejk/daily-chirp/issues/8)
 
 ## GitHub Actions Workflow
 - Used the `GITHUB_TOKEN` provided by GitHub Actions to authenticate and push commits.
