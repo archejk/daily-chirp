@@ -5,17 +5,17 @@ A Vue.js project designed to practice about CI/CD principles and GitHub Actions.
 - A GitHub Actions workflow that reflects the continuous streak of contributions to Vue.js project.
 - This helps maintain a green GitHub contributions calendar by ensuring there is at least one commit every day. Ideal for practicing CI/CD workflows and learning about GitHub Actions.
 
-# Summary
-## Repository Settings
-- Ensured that Read and Write permissions were selected for workflow permissions in the repository settings.
-
-### Added features
+## Added features/changes
 - Implement a Discord notification to alert you whenever a successful commit is made by integrating a Discord webhook into your GitHub Actions workflow.
    - Ticket: [[daily-chirp] implement a discord alert](https://github.com/archejk/daily-chirp/issues/10)
 - Added a mechanism to control whether the workflow should run based on a configurable schedule, and whether it should be turned on or off. This can be achieved by using environment variables or repository secrets to control the workflow's behavior.
    - Ticket: [[daily-chirp] add a schedule control mechanism](https://github.com/archejk/daily-chirp/issues/8)
 - Cron Schedule
    - Ticket: https://github.com/archejk/daily-chirp/issues/1 
+
+# Summary
+## Repository Settings
+- Ensured that Read and Write permissions were selected for workflow permissions in the repository settings.
 
 ## GitHub Actions Workflow
 - Used the `GITHUB_TOKEN` provided by GitHub Actions to authenticate and push commits.
