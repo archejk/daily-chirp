@@ -15,6 +15,8 @@ Reflects the continuous streak of contributions.
    - Ticket: [[daily-chirp] implement a discord alert](https://github.com/archejk/daily-chirp/issues/10)
 - Added a mechanism to control whether the workflow should run based on a configurable schedule, and whether it should be turned on or off. This can be achieved by using environment variables or repository secrets to control the workflow's behavior.
    - Ticket: [[daily-chirp] add a schedule control mechanism](https://github.com/archejk/daily-chirp/issues/8)
+- Cron Schedule
+   - Ticket: https://github.com/archejk/daily-chirp/issues/1 
 
 ## GitHub Actions Workflow
 - Used the `GITHUB_TOKEN` provided by GitHub Actions to authenticate and push commits.
