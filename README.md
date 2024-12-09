@@ -1,9 +1,8 @@
 # DailyChirp/GreenStreak
-A Vue.js project designed to practice about CI/CD principles and GitHub Actions
-Reflects the continuous streak of contributions.
+A Vue.js project designed to practice about CI/CD principles and GitHub Actions.
 
 ## Description
-- A GitHub Actions workflow that automates daily commits to your Vue.js project.
+- A GitHub Actions workflow that reflects the continuous streak of contributions to Vue.js project.
 - This helps maintain a green GitHub contributions calendar by ensuring there is at least one commit every day. Ideal for practicing CI/CD workflows and learning about GitHub Actions.
 
 # Summary
