@@ -10,6 +10,10 @@ Reflects the continuous streak of contributions.
 ## Repository Settings
 - Ensured that Read and Write permissions were selected for workflow permissions in the repository settings.
 
+## Added notification system
+- Implement a Discord notification to alert you whenever a successful commit is made by integrating a Discord webhook into your GitHub Actions workflow.
+   - Ticket: https://github.com/archejk/daily-chirp/issues/10
+
 ## GitHub Actions Workflow
 - Used the `GITHUB_TOKEN` provided by GitHub Actions to authenticate and push commits.
 
