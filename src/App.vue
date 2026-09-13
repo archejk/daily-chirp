@@ -3,7 +3,7 @@
     <section class="manager-panel">
       <div class="panel-header">
         <div>
-          <p class="eyebrow">Daily Commit Manager</p>
+          <p class="eyebrow">Daily Chirp Manager</p>
           <h1>Schedule control</h1>
         </div>
         <span class="status-pill" :class="{ active: enabled }">
