@@ -24,12 +24,28 @@
           <input
             type="checkbox"
             :checked="enabled"
-            :disabled="loading || saving"
+            :disabled="!password || loading || saving"
             @change="setEnabled($event.target.checked)"
           >
           <span class="slider"></span>
         </label>
       </div>
+
+      <form class="auth-row" @submit.prevent="unlockManager">
+        <label for="manager-password">Manager password</label>
+        <div>
+          <input
+            id="manager-password"
+            v-model="passwordInput"
+            autocomplete="current-password"
+            placeholder="Enter password"
+            type="password"
+          >
+          <button type="submit" :disabled="!passwordInput || loading || saving">
+            Unlock
+          </button>
+        </div>
+      </form>
 
       <dl class="details-grid">
         <div>
@@ -49,7 +65,7 @@
       <p v-if="message" class="message" :class="messageType">{{ message }}</p>
 
       <div class="actions-row">
-        <button type="button" :disabled="loading || saving" @click="loadStatus">
+        <button type="button" :disabled="!password || loading || saving" @click="loadStatus">
           Refresh
         </button>
         <a
@@ -74,6 +90,8 @@ export default {
       message: '',
       messageType: 'neutral',
       owner: 'archejk',
+      password: sessionStorage.getItem('managerPassword') || '',
+      passwordInput: sessionStorage.getItem('managerPassword') || '',
       repo: 'daily-chirp',
       saving: false,
       updatedAt: null,
@@ -96,9 +114,21 @@ export default {
     }
   },
   mounted() {
-    this.loadStatus()
+    if (this.password) {
+      this.loadStatus()
+      return
+    }
+
+    this.loading = false
+    this.message = 'Enter the manager password to load the schedule setting.'
+    this.messageType = 'neutral'
   },
   methods: {
+    unlockManager() {
+      this.password = this.passwordInput
+      sessionStorage.setItem('managerPassword', this.password)
+      this.loadStatus()
+    },
     async loadStatus() {
       this.loading = true
       this.message = ''
@@ -128,9 +158,9 @@ export default {
       try {
         const status = await this.request('/api/commit-toggle', {
           method: 'PUT',
-          headers: {
+          headers: this.authHeaders({
             'Content-Type': 'application/json'
-          },
+          }),
           body: JSON.stringify({ enabled })
         })
 
@@ -155,14 +185,38 @@ export default {
       this.updatedAt = status.updatedAt
     },
     async request(url, options) {
-      const response = await fetch(url, options)
-      const body = await response.json()
+      const requestOptions = {
+        ...options,
+        headers: this.authHeaders(options && options.headers)
+      }
+      const response = await fetch(url, requestOptions)
+      const text = await response.text()
+      let body = {}
+
+      try {
+        body = text ? JSON.parse(text) : {}
+      } catch (error) {
+        body = {
+          error: text || 'The API returned an invalid response.'
+        }
+      }
 
       if (!response.ok) {
+        if (response.status === 401) {
+          sessionStorage.removeItem('managerPassword')
+          this.password = ''
+        }
+
         throw new Error(body.error || 'Request failed')
       }
 
       return body
+    },
+    authHeaders(extraHeaders) {
+      return {
+        'X-Manager-Password': this.password,
+        ...extraHeaders
+      }
     }
   }
 }
@@ -282,6 +336,37 @@ p {
   border-top: 1px solid var(--border);
   margin: 32px 0;
   padding: 28px 0;
+}
+
+.auth-row {
+  border-bottom: 1px solid var(--border);
+  display: grid;
+  gap: 10px;
+  margin: -12px 0 32px;
+  padding-bottom: 28px;
+}
+
+.auth-row label {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.auth-row div {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+}
+
+.auth-row input {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--ink);
+  flex: 1;
+  min-height: 42px;
+  min-width: 0;
+  padding: 0 14px;
 }
 
 .switch {
@@ -424,9 +509,15 @@ button:disabled {
 
   .panel-header,
   .toggle-row,
-  .actions-row {
+  .actions-row,
+  .auth-row div {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .auth-row input,
+  .auth-row button {
+    width: 100%;
   }
 
   h1 {

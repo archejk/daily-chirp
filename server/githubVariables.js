@@ -31,13 +31,13 @@ async function githubRequest(path, options = {}) {
       method: options.method || 'GET',
       path,
       headers: {
-      Accept: GITHUB_ACCEPT,
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
+        Accept: GITHUB_ACCEPT,
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
         'Content-Length': body ? Buffer.byteLength(body) : 0,
         'User-Agent': 'daily-commit-manager',
-      'X-GitHub-Api-Version': GITHUB_API_VERSION,
-      ...options.headers
+        'X-GitHub-Api-Version': GITHUB_API_VERSION,
+        ...options.headers
       }
     }, (response) => {
       let text = ''

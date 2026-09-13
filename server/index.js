@@ -1,6 +1,7 @@
 const http = require('http')
 const fs = require('fs')
 const path = require('path')
+const { verifyManagerPassword } = require('./auth')
 const { getCommitToggle, updateCommitToggle } = require('./githubVariables')
 
 loadEnv()
@@ -35,7 +36,7 @@ function loadEnv() {
 
 function sendJson(response, status, body) {
   response.writeHead(status, {
-    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Headers': 'Content-Type, X-Manager-Password',
     'Access-Control-Allow-Methods': 'GET,PUT,OPTIONS',
     'Access-Control-Allow-Origin': process.env.CLIENT_ORIGIN || 'http://localhost:8080',
     'Content-Type': 'application/json'
@@ -77,6 +78,10 @@ const server = http.createServer(async (request, response) => {
   }
 
   try {
+    if (request.url === '/api/commit-toggle') {
+      verifyManagerPassword(request.headers)
+    }
+
     if (request.url === '/api/commit-toggle' && request.method === 'GET') {
       sendJson(response, 200, await getCommitToggle())
       return

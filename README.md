@@ -9,16 +9,18 @@ A Vue.js project designed to practice about CI/CD principles, GitHub Actions and
 
 The Vue app now includes a Daily Commit Manager UI that can turn scheduled commits on or off by updating the repository Actions variable named `COMMIT_ENABLED`.
 
-The manager uses a small local Node.js backend so the GitHub token stays out of the browser.
+The manager uses a protected API so the GitHub token stays out of the browser. Locally, that API runs as a small Node.js server. On Netlify, it runs as a serverless function.
 
 ### Current GitHub API prerequisite
 
-Use a fine-grained personal access token for the backend with access to this repository and these repository permissions:
+Use a fine-grained personal access token for the API with access to this repository and these repository permissions:
 
 - `Variables`: read and write
 - `Metadata`: read
 
 The old approach of updating `COMMIT_ENABLED` as a GitHub Actions secret still works, but it is no longer the best fit for this toggle. `COMMIT_ENABLED` is not sensitive, so the workflow reads it from repository Variables first and falls back to the old secret only for compatibility.
+
+Set a private manager password as `MANAGER_PASSWORD`. The UI sends this password to the API before it can read or update `COMMIT_ENABLED`.
 
 ### Run the manager locally
 
@@ -28,7 +30,7 @@ The old approach of updating `COMMIT_ENABLED` as a GitHub Actions secret still w
 cp .env.example .env
 ```
 
-2. Edit `.env` and replace `GITHUB_TOKEN` with your fine-grained GitHub PAT.
+2. Edit `.env`, replace `GITHUB_TOKEN` with your fine-grained GitHub PAT, and set `MANAGER_PASSWORD` to a private password.
 
 3. Start the backend:
 
@@ -45,6 +47,32 @@ npm run serve
 5. Open the local Vue URL and use the toggle to enable or disable scheduled commits.
 
 Do not commit `.env`. It contains your GitHub token and is ignored by git.
+
+### Deploy the manager to Netlify
+
+The project includes `netlify.toml`, which builds the Vue app from `dist` and routes `/api/commit-toggle` to the Netlify Function in `netlify/functions/commit-toggle.js`.
+
+1. Create a Netlify site connected to this GitHub repository.
+
+2. Use these build settings:
+   - Build command: `npm run build`
+   - Publish directory: `dist`
+   - Functions directory: `netlify/functions`
+
+3. Add these Netlify environment variables in the Netlify project settings:
+   - `GITHUB_OWNER=archejk`
+   - `GITHUB_REPO=daily-chirp`
+   - `GITHUB_TOKEN=your_fine_grained_github_pat`
+   - `COMMIT_TOGGLE_VARIABLE=COMMIT_ENABLED`
+   - `MANAGER_PASSWORD=your_private_manager_password`
+
+4. Make sure the environment variables are available to Functions. Netlify Functions read environment variables through `process.env`.
+
+5. Deploy the site.
+
+6. Open the deployed Netlify URL, enter `MANAGER_PASSWORD`, and use the toggle.
+
+If you change `GITHUB_TOKEN` or `MANAGER_PASSWORD` later in Netlify, trigger a new deploy so the Function uses the updated values.
 
 ## Added features/changes
 - Implement a Discord notification to alert you whenever a successful commit is made by integrating a Discord webhook into your GitHub Actions workflow.
