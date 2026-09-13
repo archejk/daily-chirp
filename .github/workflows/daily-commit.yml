@@ -1,11 +1,15 @@
 name: Dynamic Daily Commits
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: '0 * * * *'  # runs every hour
   push:
     branches:
       - main
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -13,22 +17,11 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '14'
-
-    - name: Install dependencies
-      run: npm install
+      uses: actions/checkout@v4
 
     - name: Make a commit
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        COMMIT_ENABLED: ${{ secrets.COMMIT_ENABLED }} # load the secret value created in github
+        COMMIT_ENABLED: ${{ vars.COMMIT_ENABLED || secrets.COMMIT_ENABLED }} # load the variable or legacy secret value created in GitHub
         DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }} # load the secret value created in github
       run: |
         # Check if commit is enabled
@@ -52,13 +45,14 @@ jobs:
           
           git add daily_commit.txt
           git commit -m "Daily commit $current_time"
-          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/archejk/daily-chirp.git HEAD:main
+          git push
 
-          # Send alert to Discord
-          curl -H "Content-Type: application/json" \
-               -X POST \
-               -d '{"username": "GitHub Bot", "content": "✅ Successful commit: Daily commit '"$current_time"'."}' \
-               $DISCORD_WEBHOOK_URL
+          if [ -n "${DISCORD_WEBHOOK_URL}" ]; then
+            curl -H "Content-Type: application/json" \
+                 -X POST \
+                 -d '{"username": "GitHub Bot", "content": "✅ Successful commit: Daily commit '"$current_time"'."}' \
+                 $DISCORD_WEBHOOK_URL
+          fi
         else
           echo "Skipping commit for this run as threshold not met."
         fi

@@ -84,3 +84,72 @@ on:
 
 ## Status
 [![Daily Commit](https://github.com/archejk/daily-chirp/actions/workflows/daily-commit.yml/badge.svg)](https://github.com/archejk/daily-chirp/actions/workflows/daily-commit.yml)
+
+## How to restart automated commits after a long pause
+
+If automated commits stopped for a long time, GitHub may have disabled the scheduled workflow because the public repository had no recent activity. GitHub can disable scheduled workflows after 60 days of repository inactivity.
+
+Follow these steps to make the auto commit work again:
+
+1. Confirm you are in the correct GitHub repository.
+   - Repository: `archejk/daily-chirp`
+   - Branch: `main`
+   - Workflow file: `.github/workflows/daily-commit.yml`
+
+2. Commit and push the latest workflow file changes.
+   - The workflow should include `workflow_dispatch` so it can be run manually.
+   - The workflow should include `permissions: contents: write` so GitHub Actions can push commits.
+   - The workflow should use `actions/checkout@v4`.
+
+3. Open the repository on GitHub.
+   - Go to `https://github.com/archejk/daily-chirp`
+   - Click the `Actions` tab.
+   - Click `Dynamic Daily Commits` in the left sidebar.
+
+4. Re-enable the workflow if GitHub shows it as disabled.
+   - Click the `...` menu near the workflow title.
+   - Click `Enable workflow`.
+   - If there is a large warning banner, use the button in the banner to enable the workflow.
+
+5. Set the commit toggle.
+   - Go to `Settings`.
+   - Go to `Secrets and variables`.
+   - Click `Actions`.
+   - Open the `Variables` tab.
+   - Add or update a repository variable:
+     - Name: `COMMIT_ENABLED`
+     - Value: `true`
+
+6. Keep the Discord webhook as a secret if Discord alerts are still needed.
+   - Go to `Settings`.
+   - Go to `Secrets and variables`.
+   - Click `Actions`.
+   - Open the `Secrets` tab.
+   - Add or update:
+     - Name: `DISCORD_WEBHOOK_URL`
+     - Value: your Discord webhook URL
+   - GitHub does not show existing secret values after they are saved. A blank value field while editing a secret is normal.
+
+7. Check GitHub Actions workflow permissions.
+   - Go to `Settings`.
+   - Go to `Actions`.
+   - Click `General`.
+   - Under `Workflow permissions`, select `Read and write permissions`.
+   - Click `Save`.
+
+8. Test the workflow manually.
+   - Go to `Actions`.
+   - Click `Dynamic Daily Commits`.
+   - Click `Run workflow`.
+   - Choose branch `main`.
+   - Click the green `Run workflow` button.
+
+9. Read the workflow logs.
+   - If the log says `Commits are disabled via COMMIT_ENABLED secret`, set `COMMIT_ENABLED` to `true`.
+   - If the log says `Skipping commit for this run as threshold not met`, the workflow is working but the random 25% commit chance skipped that run.
+   - If the log fails at `git push`, check that `permissions: contents: write` is in the workflow and repository workflow permissions are set to `Read and write permissions`.
+
+10. Wait for the scheduled run.
+   - The current schedule runs once per hour.
+   - The workflow commits only when the random threshold is met.
+   - With the current threshold, it should average about 6 commits per day, but some hours will intentionally skip.
