@@ -1,3 +1,5 @@
+const https = require('https')
+
 const GITHUB_API_VERSION = '2026-03-10'
 const GITHUB_ACCEPT = 'application/vnd.github+json'
 
@@ -22,32 +24,58 @@ async function githubRequest(path, options = {}) {
   const { token } = getConfig()
   requireToken(token)
 
-  const response = await fetch(`https://api.github.com${path}`, {
-    ...options,
-    headers: {
+  return new Promise((resolve, reject) => {
+    const body = options.body || null
+    const request = https.request({
+      hostname: 'api.github.com',
+      method: options.method || 'GET',
+      path,
+      headers: {
       Accept: GITHUB_ACCEPT,
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
+        'Content-Length': body ? Buffer.byteLength(body) : 0,
+        'User-Agent': 'daily-commit-manager',
       'X-GitHub-Api-Version': GITHUB_API_VERSION,
       ...options.headers
+      }
+    }, (response) => {
+      let text = ''
+
+      response.on('data', (chunk) => {
+        text += chunk
+      })
+
+      response.on('end', () => {
+        if (response.statusCode === 204) {
+          resolve(null)
+          return
+        }
+
+        const responseBody = text ? JSON.parse(text) : null
+
+        if (response.statusCode < 200 || response.statusCode >= 300) {
+          const error = new Error(
+            responseBody && responseBody.message ? responseBody.message : 'GitHub API request failed'
+          )
+          error.status = response.statusCode
+          error.details = responseBody
+          reject(error)
+          return
+        }
+
+        resolve(responseBody)
+      })
+    })
+
+    request.on('error', reject)
+
+    if (body) {
+      request.write(body)
     }
+
+    request.end()
   })
-
-  if (response.status === 204) {
-    return null
-  }
-
-  const text = await response.text()
-  const body = text ? JSON.parse(text) : null
-
-  if (!response.ok) {
-    const error = new Error(body && body.message ? body.message : 'GitHub API request failed')
-    error.status = response.status
-    error.details = body
-    throw error
-  }
-
-  return body
 }
 
 function variablePath() {
