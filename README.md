@@ -5,6 +5,47 @@ A Vue.js project designed to practice about CI/CD principles, GitHub Actions and
 - A GitHub Actions workflow that reflects the continuous streak of contributions to Vue.js project.
 - This helps maintain a green GitHub contributions calendar by ensuring there is at least one commit every day. Ideal for practicing CI/CD workflows and learning about GitHub Actions.
 
+## Daily Commit Manager
+
+The Vue app now includes a Daily Commit Manager UI that can turn scheduled commits on or off by updating the repository Actions variable named `COMMIT_ENABLED`.
+
+The manager uses a small local Node.js backend so the GitHub token stays out of the browser.
+
+### Current GitHub API prerequisite
+
+Use a fine-grained personal access token for the backend with access to this repository and these repository permissions:
+
+- `Variables`: read and write
+- `Metadata`: read
+
+The old approach of updating `COMMIT_ENABLED` as a GitHub Actions secret still works, but it is no longer the best fit for this toggle. `COMMIT_ENABLED` is not sensitive, so the workflow reads it from repository Variables first and falls back to the old secret only for compatibility.
+
+### Run the manager locally
+
+1. Copy the example environment file:
+
+```sh
+cp .env.example .env
+```
+
+2. Edit `.env` and replace `GITHUB_TOKEN` with your fine-grained GitHub PAT.
+
+3. Start the backend:
+
+```sh
+npm run server
+```
+
+4. In another terminal, start the Vue app:
+
+```sh
+npm run serve
+```
+
+5. Open the local Vue URL and use the toggle to enable or disable scheduled commits.
+
+Do not commit `.env`. It contains your GitHub token and is ignored by git.
+
 ## Added features/changes
 - Implement a Discord notification to alert you whenever a successful commit is made by integrating a Discord webhook into your GitHub Actions workflow.
    - Ticket: [[daily-chirp] implement a discord alert](https://github.com/archejk/daily-chirp/issues/10)
