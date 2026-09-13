@@ -2,6 +2,11 @@ name: Dynamic Daily Commits
 
 on:
   workflow_dispatch:
+    inputs:
+      force_commit:
+        description: 'Force a commit for manual testing'
+        required: false
+        default: 'false'
   schedule:
     - cron: '0 * * * *'  # runs every hour
   push:
@@ -34,7 +39,7 @@ jobs:
 
         THRESHOLD=25  # Approximately a 25% chance each hour, leading to approximately 6 commits per day on average.
 
-        if [ $RANDOM_NUMBER -le $THRESHOLD ]; then
+        if [ "${{ github.event.inputs.force_commit }}" = "true" ] || [ $RANDOM_NUMBER -le $THRESHOLD ]; then
           echo "Commit threshold met. Proceeding with commit..."
           git config --global user.name 'archejk'
           git config --global user.email 'jkarche13@gmail.com'

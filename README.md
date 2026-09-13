@@ -142,6 +142,7 @@ Follow these steps to make the auto commit work again:
    - Click `Dynamic Daily Commits`.
    - Click `Run workflow`.
    - Choose branch `main`.
+   - Set `force_commit` to `true` for the first test run.
    - Click the green `Run workflow` button.
 
 9. Read the workflow logs.
